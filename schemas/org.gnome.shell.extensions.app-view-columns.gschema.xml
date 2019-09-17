@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist gettext-domain="app-view-columns">
+	<schema id="org.gnome.shell.extensions.app-view-columns" path="/org/gnome/shell/extensions/app-view-columns/">
+    <key type="i" name="columns-max">
+      <default>9</default>
+      <summary>max number of columns</summary>
+      <description>Set the maximum limit of columns in the application overview</description>
+    </key>
+    <key type="b" name="compact-layout">
+      <default>true</default>
+      <summary>packed columns</summary>
+      <description>Whether to pack the icons closer together</description>
+    </key>
+	</schema>
+</schemalist>
