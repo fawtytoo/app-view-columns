@@ -22,18 +22,16 @@ let _function;
 let _signal = [];
 
 // made my own switch as I wanted a smaller footprint and no label
-var Switch = new Lang.Class({
-    Name: 'PopupSwitchMenuItem',
-    Extends: PopupMenu.PopupBaseMenuItem,
-
-    _init(state)
+class Switch extends PopupMenu.PopupBaseMenuItem
+{
+    constructor(state)
     {
-        this.parent();
+        super();
 
         this._switch = new PopupMenu.Switch(state);
         this.actor.add(this._switch.actor);
         this.actor.add_style_class_name('switch-box');
-    },
+    }
 
     activate(event)
     {
@@ -42,24 +40,20 @@ var Switch = new Lang.Class({
 
         if (event.type() == Clutter.EventType.KEY_PRESS && event.get_key_symbol() == Clutter.KEY_space)
             return;
-
-        this.parent(event);
-    },
+    }
 
     toggle()
     {
         this._switch.toggle();
         this.emit('toggled', this._switch.state);
     }
-});
+};
 
-const ColumnsMenu = new Lang.Class({
-    Name: 'ColumnsMenu',
-    Extends: PanelMenu.SystemIndicator,
-
-    _init()
+class ColumnsMenu extends PanelMenu.SystemIndicator
+{
+    constructor()
     {
-        this.parent('app-view-columns');
+        super();
 
         this.buttonMenu = new PopupMenu.PopupBaseMenuItem({reactive: true});
 
@@ -79,12 +73,13 @@ const ColumnsMenu = new Lang.Class({
 
         this.menu.addMenuItem(this.buttonMenu);
         this.menu.connect('menu-closed', _saveColumns);
-    },
+    }
 
     destroy()
     {
         this.menu.destroy();
-    },
+        super.destroy();
+    }
 
     _columnsChanged(slider, value)
     {
@@ -96,7 +91,7 @@ const ColumnsMenu = new Lang.Class({
             this.value.text = _columns.toString();
             setColumns(_columns);
         }
-    },
+    }
 
     _packed(object, value)
     {
@@ -104,7 +99,7 @@ const ColumnsMenu = new Lang.Class({
         _minimum = value;
         setColumns(_columns);
     }
-});
+};
 
 function baseAppView_init(params, gridParams)
 {
