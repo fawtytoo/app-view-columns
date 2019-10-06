@@ -78,7 +78,9 @@ class ColumnsMenu extends PanelMenu.SystemIndicator
     destroy()
     {
         this.menu.destroy();
-        super.destroy();
+
+        if (super.destroy)
+            super.destroy();
     }
 
     _columnsChanged(slider, value)
