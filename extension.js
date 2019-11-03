@@ -8,6 +8,9 @@ const PopupMenu = imports.ui.popupMenu;
 const Slider = imports.ui.slider;
 const PanelMenu = imports.ui.panelMenu;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
+const Config = imports.misc.config;
+
+var _version;
 
 const COLUMNS_MIN = 4;
 const COLUMNS_RANGE = 8;
@@ -20,34 +23,6 @@ var reloadApps = false;
 
 let _function;
 let _signal = [];
-
-// made my own switch as I wanted a smaller footprint and no label
-class Switch extends PopupMenu.PopupBaseMenuItem
-{
-    constructor(state)
-    {
-        super();
-
-        this._switch = new PopupMenu.Switch(state);
-        this.actor.add(this._switch.actor);
-        this.actor.add_style_class_name('switch-box');
-    }
-
-    activate(event)
-    {
-        if (this._switch.actor.mapped)
-            this.toggle();
-
-        if (event.type() == Clutter.EventType.KEY_PRESS && event.get_key_symbol() == Clutter.KEY_space)
-            return;
-    }
-
-    toggle()
-    {
-        this._switch.toggle();
-        this.emit('toggled', this._switch.state);
-    }
-};
 
 class ColumnsMenu extends PanelMenu.SystemIndicator
 {
@@ -65,11 +40,13 @@ class ColumnsMenu extends PanelMenu.SystemIndicator
 
         this.columns = new Slider.Slider((_columns - COLUMNS_MIN) / COLUMNS_RANGE);
         this.buttonMenu.actor.add(this.columns.actor, {expand: true});
-        this.columns.connect('value-changed', (slider, value) => this._columnsChanged(slider, value));
+        this.columns.connect(_version < 34 ? 'value-changed' : 'notify::value', () => this._columnsChanged());
 
-        this.packed = new Switch(_minimum);
+        this.packed = new PopupMenu.PopupSwitchMenuItem(null, _minimum);
+        this.packed.label.visible = false;
+        this.packed.actor.add_style_class_name('switch-box');
         this.buttonMenu.actor.add(this.packed.actor);
-        this.packed.connect('toggled', (object, value) => this._packed(object, value));
+        this.packed.connect('toggled', (object) => this._packed(object.state));
 
         this.menu.addMenuItem(this.buttonMenu);
         this.menu.connect('menu-closed', _saveColumns);
@@ -83,9 +60,9 @@ class ColumnsMenu extends PanelMenu.SystemIndicator
             super.destroy();
     }
 
-    _columnsChanged(slider, value)
+    _columnsChanged()
     {
-        var newValue = (value * COLUMNS_RANGE + COLUMNS_MIN).toFixed(0);
+        var newValue = (this.columns.value * COLUMNS_RANGE + COLUMNS_MIN).toFixed(0);
         if (newValue != _columns)
         {
             columnsChanged = true;
@@ -95,10 +72,10 @@ class ColumnsMenu extends PanelMenu.SystemIndicator
         }
     }
 
-    _packed(object, value)
+    _packed(state)
     {
         columnsChanged = true;
-        _minimum = value;
+        _minimum = state;
         setColumns(_columns);
     }
 };
@@ -159,6 +136,8 @@ function init()
         throw new Error('Schema ' + schema + ' not found for ' + Me.metadata.uuid);
 
     _settings = new Gio.Settings({ settings_schema: schemaObj });
+
+    _version = parseInt(Config.PACKAGE_VERSION.split('.')[1]);
 }
 
 function enable()
