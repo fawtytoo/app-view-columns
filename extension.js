@@ -44,7 +44,7 @@ class ColumnsMenu extends PanelMenu.SystemIndicator
 
         this.packed = new PopupMenu.PopupSwitchMenuItem(null, _minimum);
         this.packed.label.visible = false;
-        this.packed.add_style_class_name('switch-box');
+        this.packed.actor.add_style_class_name('switch-box');
         this.buttonMenu.actor.add(this.packed.actor);
         this.packed.connect('toggled', (object) => this._packed(object.state));
 
