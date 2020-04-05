@@ -3,9 +3,7 @@
   "description": "Set the number of columns in the Applications Overview. Controlled by a slider in the system menu with a switch for increasing compactness for up to 12 columns.", 
   "name": "Application View Columns", 
   "shell-version": [
-    "3.30",
-    "3.32",
-    "3.34"
+    "3.36"
   ], 
   "url": "https://github.com/fawtytoo/app-view-columns", 
   "uuid": "app_view_columns@fawtytoo", 

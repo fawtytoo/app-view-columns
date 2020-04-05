@@ -2,6 +2,7 @@ const Clutter = imports.gi.Clutter;
 const Gio = imports.gi.Gio;
 const Lang = imports.lang;
 const St = imports.gi.St;
+const GObject = imports.gi.GObject
 const Main = imports.ui.main;
 const AppDisplay = imports.ui.appDisplay;
 const PopupMenu = imports.ui.popupMenu;
@@ -24,11 +25,11 @@ var reloadApps = false;
 let _function;
 let _signal = [];
 
-class ColumnsMenu extends PanelMenu.SystemIndicator
+let ColumnsMenu = GObject.registerClass(class ColumnsMenu extends PanelMenu.SystemIndicator
 {
-    constructor()
+    _init()
     {
-        super();
+        super._init();
 
         this.buttonMenu = new PopupMenu.PopupBaseMenuItem({reactive: true});
 
@@ -78,7 +79,7 @@ class ColumnsMenu extends PanelMenu.SystemIndicator
         _minimum = state;
         setColumns(_columns);
     }
-};
+});
 
 function baseAppView_init(params, gridParams)
 {
