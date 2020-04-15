@@ -9,6 +9,7 @@ const Slider = imports.ui.slider;
 const PanelMenu = imports.ui.panelMenu;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 const Config = imports.misc.config;
+const GObject = imports.gi.GObject;
 
 var _version;
 
@@ -24,11 +25,11 @@ var reloadApps = false;
 let _function;
 let _signal = [];
 
-class ColumnsMenu extends PanelMenu.SystemIndicator
+var ColumnsMenu = class ColumnsMenu extends PanelMenu.SystemIndicator
 {
-    constructor()
+    _init()
     {
-        super();
+        super._init();
 
         this.buttonMenu = new PopupMenu.PopupBaseMenuItem({reactive: true});
 
@@ -138,6 +139,12 @@ function init()
     _settings = new Gio.Settings({ settings_schema: schemaObj });
 
     _version = parseInt(Config.PACKAGE_VERSION.split('.')[1]);
+
+    if (_version > 34)
+        ColumnsMenu = GObject.registerClass(
+            {GTypeName: 'ColumnsMenu'},
+            ColumnsMenu
+        );
 }
 
 function enable()
