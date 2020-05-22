@@ -149,8 +149,8 @@ function init()
 
 function enable()
 {
-    _function = AppDisplay.BaseAppView.prototype._init;
-    AppDisplay.BaseAppView.prototype._init = baseAppView_init;
+    _function = AppDisplay.AllView.prototype._init;
+    AppDisplay.AllView.prototype._init = baseAppView_init;
 
     _signal['overview-showing'] = Main.overview.connect('showing', overviewShowing);
 
@@ -165,7 +165,7 @@ function enable()
 function disable()
 {
     Main.overview.disconnect(_signal['overview-showing']);
-    AppDisplay.BaseAppView.prototype._init = _function;
+    AppDisplay.AllView.prototype._init = _function;
 
     setColumns(AppDisplay.MAX_COLUMNS);
 
