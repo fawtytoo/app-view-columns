@@ -81,17 +81,22 @@ var ColumnsMenu = class ColumnsMenu extends PanelMenu.SystemIndicator
     }
 };
 
-function baseAppView_init(params, gridParams)
+function allView_init()
 {
-    _view['base'].apply(this, [params, gridParams]);
+    _view['all'].apply(this, []);
+    setParam(this._grid, _columns);
+}
+
+function frequentView_init()
+{
+    _view['frequent'].apply(this, []);
     setParam(this._grid, _columns);
 }
 
 function folderView_init(folder, id, parentView)
 {
     _view['folder'].apply(this, [folder, id, parentView]);
-    if (_version > 34)
-        setParam(this._grid, AppDisplay.MAX_COLUMNS);
+    setParam(this._grid, _columns);
 }
 
 function redisplay(view)
@@ -165,10 +170,15 @@ function init()
 
 function enable()
 {
-    _view['base'] = AppDisplay.BaseAppView.prototype._init;
-    AppDisplay.BaseAppView.prototype._init = baseAppView_init;
-    _view['folder'] = AppDisplay.FolderView.prototype._init;
-    AppDisplay.FolderView.prototype._init = folderView_init;
+    _view['all'] = AppDisplay.AllView.prototype._init;
+    AppDisplay.AllView.prototype._init = allView_init;
+    _view['frequent'] = AppDisplay.FrequentView.prototype._init;
+    AppDisplay.FrequentView.prototype._init = frequentView_init;
+    if (_version < 36)
+    {
+        _view['folder'] = AppDisplay.FolderView.prototype._init;
+        AppDisplay.FolderView.prototype._init = folderView_init;
+    }
 
     _signal['overview-showing'] = Main.overview.connect('showing', overviewShowing);
 
@@ -183,8 +193,10 @@ function enable()
 function disable()
 {
     Main.overview.disconnect(_signal['overview-showing']);
-    AppDisplay.BaseAppView.prototype._init = _view['base'];
-    AppDisplay.FolderView.prototype._init = _view['folder'];
+    AppDisplay.AllView.prototype._init = _view['all'];
+    AppDisplay.FrequentView.prototype._init = _view['frequent'];
+    if (_version < 36)
+        AppDisplay.FolderView.prototype._init = _view['folder'];
 
     setColumns(AppDisplay.MAX_COLUMNS);
 
