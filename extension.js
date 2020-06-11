@@ -99,12 +99,6 @@ function folderView_init(folder, id, parentView)
     setParam(this._grid, _columns);
 }
 
-function redisplay(view)
-{
-    view._grid.queue_relayout();
-    //view._redisplay();
-}
-
 function setParam(param, setting)
 {
     param._colLimit = setting;
@@ -126,10 +120,15 @@ function overviewShowing()
     if (reloadApps && Main.overview.viewSelector._showAppsButton.checked)
     {
         if (_version > 34)
-            redisplay(Main.overview.viewSelector.appDisplay._views[AppDisplay.Views.FREQUENT].view);
+        {
+            Main.overview.viewSelector.appDisplay._views[AppDisplay.Views.FREQUENT].view._grid.queue_relayout();
+            Main.overview.viewSelector.appDisplay._views[AppDisplay.Views.ALL].view._grid.queue_relayout();
+        }
         else
+        {
             Main.overview.viewSelector.appDisplay._views[AppDisplay.Views.FREQUENT].view._redisplay();
-        Main.overview.viewSelector.appDisplay._views[AppDisplay.Views.ALL].view._redisplay();
+            Main.overview.viewSelector.appDisplay._views[AppDisplay.Views.ALL].view._redisplay();
+        }
 
         reloadApps = false;
     }
