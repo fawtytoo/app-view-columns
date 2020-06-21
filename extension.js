@@ -25,11 +25,13 @@ var reloadApps = false;
 let _view = [];
 let _signal = [];
 
-var ColumnsMenu = class ColumnsMenu extends PanelMenu.SystemIndicator
-{
+const ColumnsMenu = new Lang.Class({
+    Name: 'ColumnsMenu',
+    Extends: PanelMenu.SystemIndicator,
+
     _init()
     {
-        super._init();
+        this.parent();
 
         this.buttonMenu = new PopupMenu.PopupBaseMenuItem({reactive: true});
 
@@ -51,15 +53,14 @@ var ColumnsMenu = class ColumnsMenu extends PanelMenu.SystemIndicator
 
         this.menu.addMenuItem(this.buttonMenu);
         this.menu.connect('menu-closed', _saveColumns);
-    }
+    },
 
     destroy()
     {
         this.menu.destroy();
 
-        if (super.destroy)
-            super.destroy();
-    }
+        this.parent.destroy();
+    },
 
     _columnsChanged()
     {
@@ -71,7 +72,7 @@ var ColumnsMenu = class ColumnsMenu extends PanelMenu.SystemIndicator
             this.value.text = _columns.toString();
             setColumns(_columns);
         }
-    }
+    },
 
     _packed(state)
     {
@@ -79,7 +80,7 @@ var ColumnsMenu = class ColumnsMenu extends PanelMenu.SystemIndicator
         _minimum = state;
         setColumns(_columns);
     }
-};
+});
 
 function allView_init()
 {
@@ -159,12 +160,6 @@ function init()
     _settings = new Gio.Settings({ settings_schema: schemaObj });
 
     _version = parseInt(Config.PACKAGE_VERSION.split('.')[1]);
-
-    if (_version > 34)
-        ColumnsMenu = GObject.registerClass(
-            {GTypeName: 'ColumnsMenu'},
-            ColumnsMenu
-        );
 }
 
 function enable()
